@@ -221,6 +221,8 @@ public class MainActivity extends AppCompatActivity {
     SurfaceHolder holder = surfaceView.getHolder();
     Canvas canvas = holder.lockCanvas();
 
+    canvas.drawColor(Color.BLACK);
+
     box.draw(canvas, new Paint());
 
     boss.draw(canvas, new Paint());
