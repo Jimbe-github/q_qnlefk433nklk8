@@ -1,5 +1,6 @@
 package com.teratail.q_qnlefk433nklk8;
 
+import android.content.res.Resources;
 import android.graphics.*;
 import android.os.Bundle;
 import android.view.*;
@@ -28,12 +29,30 @@ public class MainActivity extends AppCompatActivity {
     }
   }
 
+  private static class ImageRepository {
+    private Resources resources;
+    private Map<Integer,Bitmap> imageMap = new HashMap<>();
+
+    ImageRepository(Resources resources) {
+      this.resources = resources;
+    }
+    ImageRepository prepare(@DrawableRes int... ids) {
+      for(@DrawableRes int id : ids) imageMap.put(id, BitmapFactory.decodeResource(resources, id));
+      return this;
+    }
+
+    Bitmap get(@DrawableRes int id) {
+      if(!imageMap.containsKey(id)) prepare(id);
+      return imageMap.get(id);
+    }
+  }
+
   private abstract class Character {
     protected Bitmap image;
     protected int x, y, w, h;
 
     Character(@DrawableRes int id) {
-      image =  BitmapFactory.decodeResource(getResources(), id);
+      image = imageRepository.get(id);
       x = 0;
       y = 0;
       w = image.getWidth();
@@ -178,6 +197,7 @@ public class MainActivity extends AppCompatActivity {
   private int frameWidth;
   private int score = 0;
 
+  private ImageRepository imageRepository;
   private Box box;
   private Boss boss;
   private Life life;
@@ -191,6 +211,9 @@ public class MainActivity extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+
+    imageRepository = new ImageRepository(getResources())
+            .prepare(R.drawable.mytama, R.drawable.orange);
 
     scoreLabel = findViewById(R.id.scoreLabel);
     scoreLabel.setText("Score : 0");
